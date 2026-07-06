@@ -1,0 +1,10 @@
+Collecting azure-ai-projects
+  Downloading azure_ai_projects-2.3.0-py3-none-any.whl.metadata (64 kB)
+     -------------------------------------- 64.8/64.8 kB 194.1 kB/s eta 0:00:00
+Downloading azure_ai_projects-2.3.0-py3-none-any.whl (349 kB)
+   ---------------------------------------- 349.6/349.6 kB 3.1 MB/s eta 0:00:00
+Saved c:\users\girishr\appdata\local\temp\pipcheck\azure_ai_projects-2.3.0-py3-none-any.whl
+Successfully downloaded azure-ai-projects
+
+[notice] A new release of pip is available: 24.0 -> 26.1.2
+[notice] To update, run: python.exe -m pip install --upgrade pip

@@ -1,0 +1,37 @@
+{
+  "table_name": "FinancialTransactions",
+  "database": "FinanceDB",
+  "description": "Financial transaction records for banking operations",
+  "total_rows": 125000,
+  "last_updated": "2026-02-20",
+  "columns": [
+    {"name": "TransactionID", "type": "BIGINT", "nullable": false, "description": "Unique transaction identifier"},
+    {"name": "AccountNumber", "type": "VARCHAR(20)", "nullable": false, "description": "Bank account number"},
+    {"name": "RoutingNumber", "type": "VARCHAR(9)", "nullable": false, "description": "Bank routing number"},
+    {"name": "AccountHolderName", "type": "VARCHAR(200)", "nullable": false, "description": "Account holder full name"},
+    {"name": "AccountHolderSSN", "type": "VARCHAR(11)", "nullable": true, "description": "Account holder SSN"},
+    {"name": "TransactionType", "type": "VARCHAR(20)", "nullable": false, "description": "DEPOSIT, WITHDRAWAL, TRANSFER, PAYMENT"},
+    {"name": "Amount", "type": "DECIMAL(15,2)", "nullable": false, "description": "Transaction amount in USD"},
+    {"name": "Currency", "type": "VARCHAR(3)", "nullable": false, "description": "Currency code"},
+    {"name": "RecipientAccount", "type": "VARCHAR(20)", "nullable": true, "description": "Recipient account for transfers"},
+    {"name": "RecipientName", "type": "VARCHAR(200)", "nullable": true, "description": "Recipient name"},
+    {"name": "TransactionDate", "type": "DATETIME", "nullable": false, "description": "Transaction timestamp"},
+    {"name": "MerchantName", "type": "VARCHAR(200)", "nullable": true, "description": "Merchant or payee name"},
+    {"name": "CardNumber", "type": "VARCHAR(19)", "nullable": true, "description": "Card used for transaction"},
+    {"name": "IPAddress", "type": "VARCHAR(45)", "nullable": true, "description": "Source IP address"},
+    {"name": "Status", "type": "VARCHAR(20)", "nullable": false, "description": "COMPLETED, PENDING, FAILED, FLAGGED"},
+    {"name": "RiskScore", "type": "DECIMAL(5,2)", "nullable": true, "description": "Fraud risk score 0-100"}
+  ],
+  "sample_rows": [
+    {"TransactionID": 900001, "AccountNumber": "7234-5678-9012", "RoutingNumber": "021000021", "AccountHolderName": "James Carter", "AccountHolderSSN": "341-78-9012", "TransactionType": "PAYMENT", "Amount": 127.50, "Currency": "USD", "RecipientAccount": null, "RecipientName": null, "TransactionDate": "2026-02-15T09:14:33", "MerchantName": "Amazon.com", "CardNumber": "4532-8821-3347-6651", "IPAddress": "72.34.56.78", "Status": "COMPLETED", "RiskScore": 2.1},
+    {"TransactionID": 900002, "AccountNumber": "7234-5678-9012", "RoutingNumber": "021000021", "AccountHolderName": "James Carter", "AccountHolderSSN": "341-78-9012", "TransactionType": "TRANSFER", "Amount": 15000.00, "Currency": "USD", "RecipientAccount": "8899-0011-2233", "RecipientName": "Offshore Holdings LLC", "TransactionDate": "2026-02-15T02:47:12", "MerchantName": null, "CardNumber": null, "IPAddress": "185.220.101.45", "Status": "COMPLETED", "RiskScore": 87.5},
+    {"TransactionID": 900003, "AccountNumber": "3456-7890-1234", "RoutingNumber": "071000013", "AccountHolderName": "Maria Gonzalez", "AccountHolderSSN": "512-34-6789", "TransactionType": "DEPOSIT", "Amount": 3200.00, "Currency": "USD", "RecipientAccount": null, "RecipientName": null, "TransactionDate": "2026-02-14T11:30:00", "MerchantName": "Employer Direct Deposit", "CardNumber": null, "IPAddress": null, "Status": "COMPLETED", "RiskScore": 0.5},
+    {"TransactionID": 900004, "AccountNumber": "5678-9012-3456", "RoutingNumber": "026009593", "AccountHolderName": "Robert Kim", "AccountHolderSSN": "678-45-1234", "TransactionType": "WITHDRAWAL", "Amount": 9800.00, "Currency": "USD", "RecipientAccount": null, "RecipientName": null, "TransactionDate": "2026-02-13T16:45:00", "MerchantName": "ATM - Chicago Downtown", "CardNumber": "3782-822463-10005", "IPAddress": null, "Status": "COMPLETED", "RiskScore": 45.2},
+    {"TransactionID": 900005, "AccountNumber": "9012-3456-7890", "RoutingNumber": "021000021", "AccountHolderName": "Priya Sharma", "AccountHolderSSN": "223-67-8901", "TransactionType": "PAYMENT", "Amount": 89.99, "Currency": "USD", "RecipientAccount": null, "RecipientName": null, "TransactionDate": "2026-02-15T14:22:10", "MerchantName": "Netflix", "CardNumber": "4916-3389-7712-0045", "IPAddress": "98.12.34.56", "Status": "COMPLETED", "RiskScore": 1.0},
+    {"TransactionID": 900006, "AccountNumber": "1122-3344-5566", "RoutingNumber": "021000021", "AccountHolderName": "David Okafor", "AccountHolderSSN": "445-12-3456", "TransactionType": "TRANSFER", "Amount": 50000.00, "Currency": "USD", "RecipientAccount": "IBAN-DE89370400440532013000", "RecipientName": "Cayman Investments Ltd", "TransactionDate": "2026-02-14T03:12:45", "MerchantName": null, "CardNumber": null, "IPAddress": "103.45.67.89", "Status": "FLAGGED", "RiskScore": 95.8},
+    {"TransactionID": 900007, "AccountNumber": "7788-9900-1122", "RoutingNumber": "071000013", "AccountHolderName": "Sarah Mitchell", "AccountHolderSSN": "567-89-0123", "TransactionType": "PAYMENT", "Amount": 45.00, "Currency": "USD", "RecipientAccount": null, "RecipientName": null, "TransactionDate": "2026-02-15T08:00:00", "MerchantName": "Starbucks", "CardNumber": "4532-1100-8876-5543", "IPAddress": "73.22.11.99", "Status": "COMPLETED", "RiskScore": 0.3},
+    {"TransactionID": 900008, "AccountNumber": "3344-5566-7788", "RoutingNumber": "026009593", "AccountHolderName": "Ahmed Hassan", "AccountHolderSSN": "189-23-4567", "TransactionType": "PAYMENT", "Amount": 1250.00, "Currency": "USD", "RecipientAccount": null, "RecipientName": null, "TransactionDate": "2026-02-12T19:30:00", "MerchantName": "Best Buy", "CardNumber": "5412-9988-3321-7700", "IPAddress": "45.67.89.12", "Status": "COMPLETED", "RiskScore": 5.4},
+    {"TransactionID": 900009, "AccountNumber": "5566-7788-9900", "RoutingNumber": "021000021", "AccountHolderName": "Emily Chen", "AccountHolderSSN": "334-56-7890", "TransactionType": "TRANSFER", "Amount": 2500.00, "Currency": "USD", "RecipientAccount": "6677-8899-0011", "RecipientName": "Chen Family Trust", "TransactionDate": "2026-02-15T10:15:00", "MerchantName": null, "CardNumber": null, "IPAddress": "98.45.67.23", "Status": "COMPLETED", "RiskScore": 3.2},
+    {"TransactionID": 900010, "AccountNumber": "7234-5678-9012", "RoutingNumber": "021000021", "AccountHolderName": "James Carter", "AccountHolderSSN": "341-78-9012", "TransactionType": "TRANSFER", "Amount": 25000.00, "Currency": "USD", "RecipientAccount": "9988-7766-5544", "RecipientName": "Unknown Entity Corp", "TransactionDate": "2026-02-15T03:02:18", "MerchantName": null, "CardNumber": null, "IPAddress": "185.220.101.45", "Status": "FLAGGED", "RiskScore": 92.1}
+  ]
+}

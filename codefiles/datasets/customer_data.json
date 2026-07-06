@@ -1,0 +1,40 @@
+{
+  "table_name": "Customers",
+  "database": "RetailDB",
+  "description": "Customer master data for retail operations",
+  "total_rows": 48500,
+  "last_updated": "2026-02-15",
+  "columns": [
+    {"name": "CustomerID", "type": "INT", "nullable": false, "description": "Unique customer identifier"},
+    {"name": "FirstName", "type": "VARCHAR(100)", "nullable": false, "description": "Customer first name"},
+    {"name": "LastName", "type": "VARCHAR(100)", "nullable": false, "description": "Customer last name"},
+    {"name": "SSN", "type": "VARCHAR(11)", "nullable": true, "description": "Social Security Number"},
+    {"name": "Email", "type": "VARCHAR(255)", "nullable": false, "description": "Email address"},
+    {"name": "Phone", "type": "VARCHAR(20)", "nullable": true, "description": "Phone number"},
+    {"name": "CreditCardNumber", "type": "VARCHAR(19)", "nullable": true, "description": "Primary payment card"},
+    {"name": "CreditCardExpiry", "type": "VARCHAR(7)", "nullable": true, "description": "Card expiration date"},
+    {"name": "CVV", "type": "VARCHAR(4)", "nullable": true, "description": "Card verification value"},
+    {"name": "StreetAddress", "type": "VARCHAR(500)", "nullable": true, "description": "Street address"},
+    {"name": "City", "type": "VARCHAR(100)", "nullable": true, "description": "City"},
+    {"name": "State", "type": "VARCHAR(50)", "nullable": true, "description": "State or province"},
+    {"name": "ZipCode", "type": "VARCHAR(10)", "nullable": true, "description": "Postal code"},
+    {"name": "DateOfBirth", "type": "DATE", "nullable": true, "description": "Date of birth"},
+    {"name": "AccountStatus", "type": "VARCHAR(20)", "nullable": false, "description": "Active, Inactive, Suspended"},
+    {"name": "CreatedDate", "type": "DATETIME", "nullable": false, "description": "Account creation date"},
+    {"name": "Notes", "type": "TEXT", "nullable": true, "description": "Free-text internal notes"}
+  ],
+  "sample_rows": [
+    {"CustomerID": 1001, "FirstName": "James", "LastName": "Carter", "SSN": "341-78-9012", "Email": "james.carter@inbox.com", "Phone": "206-555-0147", "CreditCardNumber": "4532-8821-3347-6651", "CreditCardExpiry": "09/2028", "CVV": "412", "StreetAddress": "742 Evergreen Terrace", "City": "Seattle", "State": "WA", "ZipCode": "98101", "DateOfBirth": "1983-07-22", "AccountStatus": "Active", "CreatedDate": "2022-01-15T08:30:00", "Notes": "Preferred customer. Loyalty tier: Gold."},
+    {"CustomerID": 1002, "FirstName": "Maria", "LastName": "Gonzalez", "SSN": "512-34-6789", "Email": "maria.g@webmail.com", "Phone": "425-555-0198", "CreditCardNumber": "5412-7534-0012-8843", "CreditCardExpiry": "03/2027", "CVV": "887", "StreetAddress": "1500 4th Ave", "City": "Bellevue", "State": "WA", "ZipCode": "98004", "DateOfBirth": "1991-11-03", "AccountStatus": "Active", "CreatedDate": "2022-03-20T14:15:00", "Notes": null},
+    {"CustomerID": 1003, "FirstName": "Robert", "LastName": "Kim", "SSN": "678-45-1234", "Email": "rkim@company.org", "Phone": "312-555-0276", "CreditCardNumber": "3782-822463-10005", "CreditCardExpiry": "12/2026", "CVV": "3321", "StreetAddress": "200 W Adams St", "City": "Chicago", "State": "IL", "ZipCode": "60606", "DateOfBirth": "1975-02-14", "AccountStatus": "Active", "CreatedDate": "2021-08-10T09:00:00", "Notes": "Called support on 2025-12-01. Issue resolved. SSN verified for identity check."},
+    {"CustomerID": 1004, "FirstName": "Priya", "LastName": "Sharma", "SSN": "223-67-8901", "Email": "priya.sharma@mail.com", "Phone": "650-555-0342", "CreditCardNumber": "4916-3389-7712-0045", "CreditCardExpiry": "06/2029", "CVV": "551", "StreetAddress": "88 Hillside Dr", "City": "San Jose", "State": "CA", "ZipCode": "95113", "DateOfBirth": "1988-09-30", "AccountStatus": "Active", "CreatedDate": "2023-05-12T11:45:00", "Notes": null},
+    {"CustomerID": 1005, "FirstName": "David", "LastName": "Okafor", "SSN": "445-12-3456", "Email": "dokafor@email.net", "Phone": "718-555-0419", "CreditCardNumber": "6011-4921-5578-3301", "CreditCardExpiry": "01/2028", "CVV": "203", "StreetAddress": "35-40 Junction Blvd", "City": "New York", "State": "NY", "ZipCode": "11372", "DateOfBirth": "1996-04-18", "AccountStatus": "Active", "CreatedDate": "2024-01-08T16:20:00", "Notes": "Student discount applied."},
+    {"CustomerID": 1006, "FirstName": "Sarah", "LastName": "Mitchell", "SSN": "567-89-0123", "Email": "s.mitchell@webmail.com", "Phone": "503-555-0587", "CreditCardNumber": "4532-1100-8876-5543", "CreditCardExpiry": "11/2027", "CVV": "764", "StreetAddress": "910 NW Flanders St", "City": "Portland", "State": "OR", "ZipCode": "97209", "DateOfBirth": "1979-12-05", "AccountStatus": "Inactive", "CreatedDate": "2020-06-22T10:10:00", "Notes": "Account closed per customer request. Credit card on file - not removed."},
+    {"CustomerID": 1007, "FirstName": "Ahmed", "LastName": "Hassan", "SSN": "189-23-4567", "Email": "a.hassan@inbox.com", "Phone": "214-555-0661", "CreditCardNumber": "5412-9988-3321-7700", "CreditCardExpiry": "08/2026", "CVV": "109", "StreetAddress": "4200 Cedar Springs Rd", "City": "Dallas", "State": "TX", "ZipCode": "75219", "DateOfBirth": "1992-06-27", "AccountStatus": "Active", "CreatedDate": "2023-11-30T07:55:00", "Notes": null},
+    {"CustomerID": 1008, "FirstName": "Emily", "LastName": "Chen", "SSN": "334-56-7890", "Email": "emily.chen@company.com", "Phone": "415-555-0738", "CreditCardNumber": "4916-7782-0054-3319", "CreditCardExpiry": "05/2029", "CVV": "622", "StreetAddress": "1 Market St", "City": "San Francisco", "State": "CA", "ZipCode": "94105", "DateOfBirth": "1987-01-11", "AccountStatus": "Active", "CreatedDate": "2022-09-14T13:30:00", "Notes": "VIP customer. Direct line to account manager."},
+    {"CustomerID": 1009, "FirstName": "Marcus", "LastName": "Brown", "SSN": "456-78-9012", "Email": "mbrown@mail.com", "Phone": "404-555-0822", "CreditCardNumber": "3782-822463-20008", "CreditCardExpiry": "02/2027", "CVV": "5519", "StreetAddress": "250 Peachtree St NE", "City": "Atlanta", "State": "GA", "ZipCode": "30303", "DateOfBirth": "1970-08-19", "AccountStatus": "Active", "CreatedDate": "2021-02-28T15:45:00", "Notes": "Dispute raised on order #78234. Refund processed."},
+    {"CustomerID": 1010, "FirstName": "Lisa", "LastName": "Nakamura", "SSN": "678-90-1234", "Email": "l.nakamura@webmail.com", "Phone": "808-555-0916", "CreditCardNumber": "6011-8834-2210-9987", "CreditCardExpiry": "10/2028", "CVV": "445", "StreetAddress": "1450 Ala Moana Blvd", "City": "Honolulu", "State": "HI", "ZipCode": "96814", "DateOfBirth": "1994-03-07", "AccountStatus": "Active", "CreatedDate": "2024-07-19T12:00:00", "Notes": null},
+    {"CustomerID": 1011, "FirstName": "Thomas", "LastName": "Russo", "SSN": "890-12-3456", "Email": "trusso@email.net", "Phone": "617-555-1023", "CreditCardNumber": "4532-6677-8899-1100", "CreditCardExpiry": "04/2027", "CVV": "338", "StreetAddress": "85 Northern Ave", "City": "Boston", "State": "MA", "ZipCode": "02210", "DateOfBirth": "1982-10-25", "AccountStatus": "Suspended", "CreatedDate": "2021-12-03T09:15:00", "Notes": "Account flagged for suspicious activity. Pending review by fraud team."},
+    {"CustomerID": 1012, "FirstName": "Fatima", "LastName": "Al-Farsi", "SSN": "123-45-6780", "Email": "falfarsi@inbox.com", "Phone": "703-555-1134", "CreditCardNumber": "5412-3344-5566-7788", "CreditCardExpiry": "07/2029", "CVV": "901", "StreetAddress": "2100 Clarendon Blvd", "City": "Arlington", "State": "VA", "ZipCode": "22201", "DateOfBirth": "1990-05-16", "AccountStatus": "Active", "CreatedDate": "2023-08-25T17:40:00", "Notes": null}
+  ]
+}

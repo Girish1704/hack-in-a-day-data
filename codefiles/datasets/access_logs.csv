@@ -1,0 +1,31 @@
+Timestamp,UserEmail,RoleID,Database,TableAccessed,Action,RowsAffected,IPAddress,SessionDuration,QueryText
+2026-02-15T08:15:22,admin.dba@company.com,ROLE-DBA-001,RetailDB,Customers,SELECT,50,10.0.1.15,00:02:14,SELECT TOP 50 * FROM Customers WHERE AccountStatus = 'Active'
+2026-02-15T09:30:10,analyst.jones@company.com,ROLE-DA-002,RetailDB,Customers,SELECT,48500,10.0.2.22,00:15:47,SELECT * FROM Customers
+2026-02-15T09:45:33,analyst.jones@company.com,ROLE-DA-002,HRDB,Employees,SELECT,8500,10.0.2.22,00:08:22,SELECT * FROM Employees
+2026-02-15T10:12:00,marketing.lead@company.com,ROLE-MKT-003,RetailDB,Customers,SELECT,200,10.0.3.10,00:03:05,SELECT CustomerID, FirstName, Email FROM Customers WHERE State = 'WA'
+2026-02-15T02:47:18,intern.morrison@company.com,ROLE-INT-004,RetailDB,Customers,SELECT,48500,192.168.55.201,00:22:36,SELECT * FROM Customers
+2026-02-15T02:52:44,intern.morrison@company.com,ROLE-INT-004,FinanceDB,FinancialTransactions,SELECT,125000,192.168.55.201,00:35:12,SELECT * FROM FinancialTransactions
+2026-02-15T03:30:01,intern.morrison@company.com,ROLE-INT-004,RetailDB,Customers,SELECT,48500,192.168.55.201,00:18:44,SELECT CustomerID, SSN, CreditCardNumber, CVV FROM Customers
+2026-02-14T14:00:00,dev.senior@company.com,ROLE-DEV-005,HealthcareDB,MedicalRecords,SELECT,32000,10.0.4.30,00:12:50,SELECT * FROM MedicalRecords
+2026-02-14T14:30:00,dev.senior@company.com,ROLE-DEV-005,FinanceDB,FinancialTransactions,INSERT,500,10.0.4.30,00:05:33,INSERT INTO FinancialTransactions (columns) VALUES (test_data)
+2026-02-14T16:20:15,analyst.smith@company.com,ROLE-DA-002,HealthcareDB,MedicalRecords,SELECT,32000,10.0.2.25,00:10:18,SELECT PatientName, SSN, PrimaryDiagnosis, Medications FROM MedicalRecords
+2026-02-14T11:00:00,compliance.officer@company.com,ROLE-CO-006,RetailDB,Customers,SELECT,100,10.0.5.10,00:04:22,SELECT TOP 100 * FROM Customers ORDER BY CreatedDate DESC
+2026-02-13T23:45:00,dev.contractor@company.com,ROLE-DEV-005,HRDB,Employees,SELECT,8500,85.214.132.77,00:45:10,SELECT EmployeeID, FirstName, LastName, SSN, Salary, BankAccountNumber, BankRoutingNumber FROM Employees
+2026-02-13T23:55:00,dev.contractor@company.com,ROLE-DEV-005,HRDB,Employees,SELECT,8500,85.214.132.77,00:02:15,SELECT * FROM Employees WHERE Salary > 150000
+2026-02-13T09:00:00,marketing.lead@company.com,ROLE-MKT-003,HealthcareDB,MedicalRecords,SELECT,32000,10.0.3.10,00:20:44,SELECT PatientName, PrimaryDiagnosis, InsuranceProvider FROM MedicalRecords
+2026-02-13T09:30:00,campaign.mgr@company.com,ROLE-MKT-003,HealthcareDB,MedicalRecords,SELECT,5000,10.0.3.12,00:08:33,SELECT PatientName, DateOfBirth, PrimaryDiagnosis FROM MedicalRecords WHERE VisitDate > '2026-01-01'
+2026-02-12T10:00:00,analyst.lee@company.com,ROLE-DA-002,FinanceDB,FinancialTransactions,SELECT,125000,10.0.2.28,00:25:15,SELECT * FROM FinancialTransactions WHERE Amount > 10000
+2026-02-12T10:45:00,analyst.lee@company.com,ROLE-DA-002,FinanceDB,FinancialTransactions,SELECT,125000,10.0.2.28,00:12:00,SELECT AccountHolderSSN, AccountNumber, Amount FROM FinancialTransactions
+2026-02-12T15:30:00,admin.dba@company.com,ROLE-DBA-001,FinanceDB,FinancialTransactions,UPDATE,3,10.0.1.15,00:01:45,UPDATE FinancialTransactions SET Status = 'REVIEWED' WHERE TransactionID IN (900002, 900006, 900010)
+2026-02-11T08:00:00,analyst.garcia@company.com,ROLE-DA-002,RetailDB,Customers,SELECT,48500,10.0.2.30,00:20:00,SELECT * FROM Customers
+2026-02-11T08:30:00,analyst.garcia@company.com,ROLE-DA-002,RetailDB,Customers,SELECT,48500,10.0.2.30,00:05:00,SELECT FirstName, LastName, SSN, CreditCardNumber, DateOfBirth FROM Customers
+2026-02-11T14:00:00,dev.junior@company.com,ROLE-DEV-005,RetailDB,Customers,UPDATE,1,10.0.4.32,00:00:30,UPDATE Customers SET Email = 'test@test.com' WHERE CustomerID = 1001
+2026-02-10T03:15:00,intern.zhang@company.com,ROLE-INT-004,FinanceDB,FinancialTransactions,SELECT,125000,103.45.67.89,00:40:22,SELECT * FROM FinancialTransactions
+2026-02-10T04:00:00,intern.zhang@company.com,ROLE-INT-004,RetailDB,Customers,SELECT,48500,103.45.67.89,00:30:15,SELECT SSN, CreditCardNumber, CVV, Email, Phone FROM Customers
+2026-02-10T09:00:00,dev.fullstack@company.com,ROLE-DEV-005,RetailDB,Customers,SELECT,100,10.0.4.35,00:01:20,SELECT TOP 100 * FROM Customers
+2026-02-09T16:00:00,analyst.wilson@company.com,ROLE-DA-002,HRDB,Employees,SELECT,8500,10.0.2.35,00:15:00,SELECT EmployeeID, FirstName, SSN, Salary, PerformanceRating, DisciplinaryRecord FROM Employees
+2026-02-09T11:00:00,marketing.lead@company.com,ROLE-MKT-003,RetailDB,Customers,SELECT,500,10.0.3.10,00:04:10,SELECT Email, FirstName FROM Customers WHERE State = 'CA' AND AccountStatus = 'Active'
+2026-02-08T22:30:00,dev.contractor@company.com,ROLE-DEV-005,FinanceDB,FinancialTransactions,SELECT,125000,85.214.132.77,00:55:30,SELECT AccountNumber, RoutingNumber, AccountHolderSSN, CardNumber FROM FinancialTransactions
+2026-02-08T13:00:00,admin.dba@company.com,ROLE-DBA-001,HealthcareDB,MedicalRecords,SELECT,10,10.0.1.15,00:01:00,SELECT TOP 10 * FROM MedicalRecords ORDER BY VisitDate DESC
+2026-02-07T09:00:00,compliance.officer@company.com,ROLE-CO-006,HRDB,Employees,SELECT,50,10.0.5.10,00:03:30,SELECT TOP 50 EmployeeID, Department, Salary FROM Employees
+2026-02-07T10:30:00,analyst.jones@company.com,ROLE-DA-002,RetailDB,Customers,SELECT,48500,10.0.2.22,00:18:00,SELECT * FROM Customers

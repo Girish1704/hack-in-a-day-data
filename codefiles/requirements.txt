@@ -1,0 +1,31 @@
+# Streamlit Web Framework
+streamlit==1.30.0
+
+# Microsoft Foundry SDK (new Foundry projects API - 2.x)
+# NOTE: 2.x uses the new agent object model (prompt agents + Responses API)
+# and is NOT compatible with azure-ai-projects 1.x / azure-ai-agents.
+azure-ai-projects>=2.0.0
+
+# OpenAI client (used via project.get_openai_client() for the Responses API)
+openai>=1.100.0
+
+# Azure Cosmos DB SDK
+azure-cosmos>=4.7
+
+# Azure Storage Blob SDK
+azure-storage-blob>=12.19
+
+# Azure Event Grid SDK
+azure-eventgrid>=4.18
+
+# Azure Identity for DefaultAzureCredential
+azure-identity>=1.19
+
+# Environment Configuration
+python-dotenv==1.0.0
+
+# HTTP Requests (used by setup_a2a.py for the ARM connection PUT)
+requests==2.31.0
+
+# Data processing
+pandas
