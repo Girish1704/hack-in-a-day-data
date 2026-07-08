@@ -33,6 +33,16 @@ def get_agent_name():
     Falls back to the legacy AGENT_ID variable name if that's all that's set."""
     return os.getenv("AGENT_NAME") or os.getenv("AGENT_ID")
 
+
+def get_risk_agent_name():
+    """Risk Detection agent NAME (second stage of the pipeline)."""
+    return os.getenv("RISK_AGENT_NAME", "Risk-Detection-Agent")
+
+
+def get_compliance_agent_name():
+    """Compliance Advisor agent NAME (third stage of the pipeline)."""
+    return os.getenv("COMPLIANCE_AGENT_NAME", "Compliance-Advisor-Agent")
+
 # ---------------------------------------------------------------------------
 # Page configuration
 # ---------------------------------------------------------------------------
@@ -829,79 +839,120 @@ def get_azure_credential():
         return None
 
 # ---------------------------------------------------------------------------
-# Agent API call
+# Agent API calls (client-side pipeline orchestration)
 # ---------------------------------------------------------------------------
-def call_agent_api(prompt: str):
-    """Call the Classification prompt agent via the Microsoft Foundry Responses API.
+# The three prompt agents run as an explicit pipeline orchestrated here in the
+# app: Classification -> Risk Detection -> Compliance Advisor. Each agent is a
+# standalone Foundry prompt agent, referenced by NAME through the Responses API
+# (project.get_openai_client() -> responses.create with an agent_reference).
+# We call them in sequence and feed each stage's output into the next, then
+# concatenate the three JSON outputs so parse_agent_response() sees one combined
+# response. This keeps every deployment plug-and-play: create the three agents,
+# az login, fill the .env, and run - no server-side wiring required.
 
-    New Foundry model: agents are referenced by NAME through the Responses API
-    (project.get_openai_client() -> responses.create with an agent_reference).
-    The Classification agent delegates to the Risk Detection and Compliance
-    Advisor agents via the A2A tool wired by setup_a2a.py, so a single call
-    drives the whole pipeline and the combined text is returned.
+def _get_openai_client():
+    """Build an authenticated Foundry OpenAI (Responses API) client, or None."""
+    project_endpoint = get_project_endpoint()
+    if not project_endpoint:
+        st.error("Missing PROJECT_ENDPOINT. Check your .env file.")
+        return None
+    credential = get_azure_credential()
+    if credential is None:
+        return None
+    project = AIProjectClient(endpoint=project_endpoint, credential=credential)
+    return project.get_openai_client()
+
+
+def _extract_response_text(response) -> str:
+    """Pull the text out of a Responses API result (aggregate or output items)."""
+    text = getattr(response, "output_text", "") or ""
+    if text.strip():
+        return text
+    parts = []
+    for item in getattr(response, "output", []) or []:
+        for content in getattr(item, "content", []) or []:
+            t = getattr(content, "text", None)
+            if isinstance(t, str):
+                parts.append(t)
+            elif t is not None and hasattr(t, "value"):
+                parts.append(t.value)
+    return "\n".join(parts)
+
+
+def _call_agent(openai_client, agent_name: str, prompt: str) -> str:
+    """Run a single prompt agent by name and return its text output."""
+    conversation = openai_client.conversations.create()
+    response = openai_client.responses.create(
+        conversation=conversation.id,
+        extra_body={"agent_reference": {"name": agent_name, "type": "agent_reference"}},
+        input=prompt,
+    )
+    return _extract_response_text(response)
+
+
+def run_security_pipeline(datasets, access_policies, access_logs, scan_mode: str, row_limit: int):
+    """Orchestrate the three prompt agents and return their combined text output.
+
+    Stage 1 (Classification): classify columns in the data assets.
+    Stage 2 (Risk Detection): the classification output + access policies + logs.
+    Stage 3 (Compliance Advisor): the classification + risk outputs.
+    The three JSON outputs are concatenated for parse_agent_response().
     """
-    try:
-        project_endpoint = get_project_endpoint()
-        agent_name = get_agent_name()
-        if not all([project_endpoint, agent_name]):
-            st.error("Missing agent configuration. Check PROJECT_ENDPOINT and AGENT_NAME in your .env file.")
-            return None
+    classification_agent = get_agent_name()
+    risk_agent = get_risk_agent_name()
+    compliance_agent = get_compliance_agent_name()
+    if not all([get_project_endpoint(), classification_agent, risk_agent, compliance_agent]):
+        st.error(
+            "Missing agent configuration. Check PROJECT_ENDPOINT, AGENT_NAME, "
+            "RISK_AGENT_NAME and COMPLIANCE_AGENT_NAME in your .env file."
+        )
+        return None
 
+    try:
         with st.spinner("Authenticating with Azure ..."):
-            credential = get_azure_credential()
-            if credential is None:
+            openai_client = _get_openai_client()
+            if openai_client is None:
                 return None
 
-        with st.spinner("Connecting to Microsoft Foundry ..."):
-            project = AIProjectClient(endpoint=project_endpoint, credential=credential)
-            openai_client = project.get_openai_client()
-
-        with st.spinner("Creating conversation ..."):
-            conversation = openai_client.conversations.create()
-
-        with st.spinner("Running agent pipeline - Classification, Risk Detection, Compliance ..."):
-            response = openai_client.responses.create(
-                conversation=conversation.id,
-                extra_body={"agent_reference": {"name": agent_name, "type": "agent_reference"}},
-                input=prompt,
+        with st.spinner("Agent 1/3 - Classifying sensitive data ..."):
+            classification_text = _call_agent(
+                openai_client, classification_agent,
+                build_classification_prompt(datasets, scan_mode, row_limit),
             )
 
-        # Prefer the convenience aggregate; fall back to walking output items.
-        response_text = getattr(response, "output_text", "") or ""
-        if not response_text.strip():
-            parts = []
-            for item in getattr(response, "output", []) or []:
-                for content in getattr(item, "content", []) or []:
-                    text = getattr(content, "text", None)
-                    if isinstance(text, str):
-                        parts.append(text)
-                    elif text is not None and hasattr(text, "value"):
-                        parts.append(text.value)
-            response_text = "\n".join(parts)
+        with st.spinner("Agent 2/3 - Detecting security risks ..."):
+            risk_text = _call_agent(
+                openai_client, risk_agent,
+                build_risk_prompt(classification_text, access_policies, access_logs),
+            )
 
-        if not response_text.strip():
-            st.error("No response received from the agent.")
+        with st.spinner("Agent 3/3 - Mapping compliance & generating remediation ..."):
+            compliance_text = _call_agent(
+                openai_client, compliance_agent,
+                build_compliance_prompt(classification_text, risk_text),
+            )
+
+        combined = "\n\n".join(
+            t for t in (classification_text, risk_text, compliance_text) if t and t.strip()
+        )
+        if not combined.strip():
+            st.error("No response received from the agents.")
             return None
-
-        return response_text
+        return combined
 
     except Exception as e:
-        st.error(f"Error calling agent: {str(e)}")
+        st.error(f"Error running agent pipeline: {str(e)}")
         with st.expander("Error Details"):
             import traceback
             st.code(traceback.format_exc())
         return None
 
 # ---------------------------------------------------------------------------
-# Build scan prompt
+# Build per-stage prompts (one per pipeline agent)
 # ---------------------------------------------------------------------------
-def build_scan_prompt(datasets: list, access_policies, access_logs, scan_mode: str, row_limit: int) -> str:
-    """Construct the prompt sent to the Classification Agent."""
-    parts = [
-        f"Analyze the following data assets for security classification, risk detection, and compliance.\n",
-        f"SCAN MODE: {'Fast Scan (sample rows only)' if scan_mode == 'Fast' else 'Full Scan (all available rows)'}\n",
-    ]
-
+def _format_data_assets(datasets: list, scan_mode: str, row_limit: int) -> str:
+    """Render the data-asset schemas + sample rows shared by the prompts."""
+    parts = []
     for ds in datasets:
         if ds:
             table = ds.get("table_name", "Unknown")
@@ -915,24 +966,33 @@ def build_scan_prompt(datasets: list, access_policies, access_logs, scan_mode: s
             parts.append(f"\n--- DATA ASSET: {table} (Database: {db}, Total Rows: {total}) ---")
             parts.append(f"Schema:\n```json\n{json.dumps(cols, indent=2)}\n```")
             parts.append(f"Sample Data ({len(rows)} rows):\n```json\n{json.dumps(rows, indent=2)}\n```")
+    return "\n".join(parts)
 
+
+def _format_access_context(access_policies, access_logs) -> str:
+    """Render access policies + logs shared by the risk-detection prompt."""
+    parts = []
     if access_policies:
         parts.append(f"\n--- ACCESS POLICIES ---\n```json\n{json.dumps(access_policies, indent=2)}\n```")
-
     if access_logs:
         if isinstance(access_logs, str):
             parts.append(f"\n--- ACCESS LOGS ---\n```\n{access_logs}\n```")
         elif isinstance(access_logs, list):
             parts.append(f"\n--- ACCESS LOGS ({len(access_logs)} entries) ---\n```\n{json.dumps(access_logs[:50], indent=2)}\n```")
+    return "\n".join(parts)
 
-    parts.append("""
 
-IMPORTANT: Return your complete analysis as THREE separate JSON code blocks (wrapped in ```json ... ```), one for each section:
+def build_classification_prompt(datasets: list, scan_mode: str, row_limit: int) -> str:
+    """Stage 1 prompt: classify every column in the data assets."""
+    return f"""Classify the sensitive data in the following data assets.
 
-SECTION 1 - DATA CLASSIFICATION (```json block 1):
-{
+SCAN MODE: {'Fast Scan (sample rows only)' if scan_mode == 'Fast' else 'Full Scan (all available rows)'}
+{_format_data_assets(datasets, scan_mode, row_limit)}
+
+Return ONLY a single JSON code block (wrapped in ```json ... ```) with this shape:
+{{
   "columns": [
-    {
+    {{
       "column": "ColumnName",
       "table": "TableName",
       "data_type": "VARCHAR(100)",
@@ -941,15 +1001,25 @@ SECTION 1 - DATA CLASSIFICATION (```json block 1):
       "reason": "Contains personal names",
       "regulations": ["GDPR", "HIPAA"],
       "recommended_controls": ["encryption", "masking"]
-    }
+    }}
   ]
-}
+}}
+Classify every column. Do not use markdown tables or bullet points - return only the JSON code block."""
 
-SECTION 2 - RISK DETECTION (```json block 2):
-{
-  "risk_summary": {"critical": 0, "high": 0, "medium": 0, "low": 0},
+
+def build_risk_prompt(classification_text: str, access_policies, access_logs) -> str:
+    """Stage 2 prompt: detect security risks from classifications + access data."""
+    return f"""Detect security risks by cross-referencing the data classifications below with the access policies and activity logs.
+
+--- DATA CLASSIFICATIONS (from the Classification agent) ---
+{classification_text}
+{_format_access_context(access_policies, access_logs)}
+
+Return ONLY a single JSON code block (wrapped in ```json ... ```) with this shape:
+{{
+  "risk_summary": {{"critical": 0, "high": 0, "medium": 0, "low": 0}},
   "risks": [
-    {
+    {{
       "risk_id": "RISK-001",
       "severity": "CRITICAL",
       "category": "Access Control",
@@ -959,32 +1029,40 @@ SECTION 2 - RISK DETECTION (```json block 2):
       "role": "RoleName",
       "recommended_action": "What to do",
       "requires_human_approval": true
-    }
+    }}
   ]
-}
+}}
+Do not use markdown tables or bullet points - return only the JSON code block."""
 
-SECTION 3 - COMPLIANCE & REMEDIATION (```json block 3):
-{
+
+def build_compliance_prompt(classification_text: str, risk_text: str) -> str:
+    """Stage 3 prompt: map risks to regulations and generate a remediation plan."""
+    return f"""Map the findings below to regulations (GDPR, HIPAA, PCI-DSS) and generate a remediation playbook.
+
+--- DATA CLASSIFICATIONS ---
+{classification_text}
+
+--- RISK FINDINGS (from the Risk Detection agent) ---
+{risk_text}
+
+Return ONLY a single JSON code block (wrapped in ```json ... ```) with this shape:
+{{
   "compliance_score": 45,
   "compliance_mapping": [
-    {"regulation": "GDPR", "article": "Article 32", "status": "Non-Compliant", "description": "..."}
+    {{"regulation": "GDPR", "article": "Article 32", "status": "Non-Compliant", "description": "..."}}
   ],
   "remediation_plan": [
-    {
+    {{
       "action": "Encrypt PII columns",
       "priority": "Immediate",
       "assigned_to": "DBA",
       "regulation": ["GDPR"],
       "description": "Apply AES-256 encryption",
       "requires_human_approval": true
-    }
+    }}
   ]
-}
-
-Do NOT use markdown tables or bullet points for the main output. Use ONLY the three JSON code blocks above. You may add brief text explanations between the blocks.
-""")
-
-    return "\n".join(parts)
+}}
+Do not use markdown tables or bullet points - return only the JSON code block."""
 
 # ---------------------------------------------------------------------------
 # Helper renderers
@@ -1127,17 +1205,15 @@ with tab_scan:
             time.sleep(0.3)
             progress.empty()
 
-            # Build prompt
-            prompt = build_scan_prompt(
+            # Run the three-agent pipeline (Classification -> Risk -> Compliance),
+            # orchestrated client-side, and get the combined text output.
+            response_text = run_security_pipeline(
                 datasets=datasets,
                 access_policies=access_policies,
                 access_logs=access_logs,
                 scan_mode=scan_mode,
-                row_limit=fast_row_limit
+                row_limit=fast_row_limit,
             )
-
-            # Call agent pipeline
-            response_text = call_agent_api(prompt)
 
             if response_text:
                 parsed = parse_agent_response(response_text)

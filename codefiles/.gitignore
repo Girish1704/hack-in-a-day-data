@@ -10,7 +10,12 @@ __pycache__/
 *.sqlite
 *.db
 venv/
+.venv/
 env/
 ENV/
 .DS_Store
 Thumbs.db
+
+# Bootstrap / packaging artifacts
+*.zip
+setup.ps1.tmp

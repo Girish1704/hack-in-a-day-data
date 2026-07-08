@@ -24,8 +24,5 @@ azure-identity>=1.19
 # Environment Configuration
 python-dotenv==1.0.0
 
-# HTTP Requests (used by setup_a2a.py for the ARM connection PUT)
-requests==2.31.0
-
 # Data processing
 pandas

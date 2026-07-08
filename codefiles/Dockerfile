@@ -15,7 +15,6 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app.py .
-COPY setup_a2a.py .
 COPY cosmos_helper.py .
 COPY storage_helper.py .
 COPY event_grid_helper.py .
